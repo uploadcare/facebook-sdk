@@ -47,6 +47,9 @@ __version__ = version.__version__
 VALID_API_VERSIONS = ["2.0", "2.1", "2.2", "2.3", "2.4"]
 
 
+session = requests.Session()
+
+
 class GraphAPI(object):
     """A client for the Facebook Graph API.
 
@@ -202,12 +205,12 @@ class GraphAPI(object):
         """Fetches the current version number of the Graph API being used."""
         args = {"access_token": self.access_token}
         try:
-            response = requests.request("GET",
-                                        "https://graph.facebook.com/" +
-                                        self.version + "/me",
-                                        params=args,
-                                        timeout=self.timeout,
-                                        proxies=self.proxies)
+            response = session.request("GET",
+                                       "https://graph.facebook.com/" +
+                                       self.version + "/me",
+                                       params=args,
+                                       timeout=self.timeout,
+                                       proxies=self.proxies)
         except requests.HTTPError as e:
             response = json.loads(e.read())
             raise GraphAPIError(response)
@@ -240,14 +243,14 @@ class GraphAPI(object):
                 args["access_token"] = self.access_token
 
         try:
-            response = requests.request(method or "GET",
-                                        "https://graph.facebook.com/" +
-                                        path,
-                                        timeout=self.timeout,
-                                        params=args,
-                                        data=post_args,
-                                        proxies=self.proxies,
-                                        files=files)
+            response = session.request(method or "GET",
+                                       "https://graph.facebook.com/" +
+                                       path,
+                                       timeout=self.timeout,
+                                       params=args,
+                                       data=post_args,
+                                       proxies=self.proxies,
+                                       files=files)
         except requests.HTTPError as e:
             response = json.loads(e.read())
             raise GraphAPIError(response)
